@@ -23,7 +23,7 @@
 
 Abra o terminal em uma pasta escolhida (Ex: Documentos) e execute o comando de clonagem de repositórios:
 
-`git clone https://github.com/allanbn99/gestao-academica.git`
+`git clone https://github.com/elvisthermiranda/GestaoAcademicaRefatorado.git`
 
 Entre na pasta onde o projeto foi instalado e execute o comando de instalação de dependências do composer:
 
