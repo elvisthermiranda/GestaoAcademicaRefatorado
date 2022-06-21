@@ -27,11 +27,11 @@ Abra o terminal em uma pasta escolhida (Ex: Documentos) e execute o comando de c
 
 Entre na pasta onde o projeto foi instalado e execute o comando de instalação de dependências do composer:
 
-`composer install`
+`composer update`
 
 Ainda na pasta root, execute o comando de instalação de dependências do npm:
 
-`npm install`
+`npm update`
 
 Para compilar os arquivos do Front-End do projeto, execute o seguinte comando:
 
