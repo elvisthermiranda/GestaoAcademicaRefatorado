@@ -2,8 +2,8 @@
 #### Tecnologias Utilizadas
 
  - **Back-End**
-	 - PHP 7.4.3 (Linguagem de Programação)
-	 - Laravel 8.37.0 (Framework)
+	 - PHP 8.0.2 (Linguagem de Programação)
+	 - Laravel 9.0 (Framework)
 	 - MySql 5.7.33 (Banco de Dados)
 	 - Composer 2.0.11 (Gerenciador de Pacotes)
 - **Front-End**
@@ -43,13 +43,13 @@ Lembre-se de criar o arquivo `.env`. Este arquivo é responsável por definir as
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=laravel
+DB_DATABASE=gestao_academica
 DB_USERNAME=root
-DB_PASSWORD=1234
+DB_PASSWORD=
 ```
 
 Após tudo configurado, execute o comando que faz rodar o servidor da aplicação:
 `php artisan serve`
 
 #### Documentação
-   - Laravel 8: https://laravel.com/docs/8.x
+   - Laravel 9: https://laravel.com/docs/9.x

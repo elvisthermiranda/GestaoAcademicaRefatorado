@@ -3,103 +3,46 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\{Endereco, Pessoa, User, PessoaEndereco, Funcionario, Cargo, TipoPerfil};
-use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class FuncionarioService
 {
-
-    private $funcionarios;
-
-    public function __construct(Funcionario $funcionarios)
-    {
-        $this->funcionarios = $funcionarios;
-    }
+    public function __construct(
+        private Funcionario $funcionarios,
+    ){}
 
     /*
     |-------------------------------------------------------------------------------------------------------------------------------------
     |   Serviço para criar um novo funcionário.
     |-------------------------------------------------------------------------------------------------------------------------------------
     */
-    public function criar(Request $request)
+    public function criar($data)
     {
-        //Funcionando ok
-        $request->validate([
-            'matricula'     =>'required',
-            'nome'          => 'required',
-            'cpf'           => 'required',
-            'rg'            => 'required',
-            'nome_pai'      => 'required',
-            'nome_mae'      => 'required',
-            'telefone'      => 'required',
-            'nacionalidade'         => 'required',
-            'naturalidade'          => 'required',
-            'titulo_eleitor'        => 'required',
-            'reservista'            => 'required',
-            'carteira_trabalho'     => 'required',
-            'rua'           => 'required',
-            'numero'        => 'required',
-            'bairro'        => 'required',
-            //'complemento'   => 'required',
-            'cidade'        => 'required',
-            'estado'        => 'required',
-            //'pais'          => 'required',
-            'cep'           => 'required',
-            'email'         => 'required'
-        ]);
-
-        DB::transaction(function() use($request) {
-            $user = User::create([
-                'email' => $request->email,
-                'password' => Hash::make('default'),
-                'is_activated' => $request->is_activated == 'on' ? 1: 0,
-            ])->assignRole($request->permissao);
+        DB::transaction(function() use ($data) {
+            $user = User::create($data[['user']])->assignRole($data->role);
     
-            $pessoa = Pessoa::create([
-                'nome'          => $request->nome,
-                'cpf'           => str_replace(['.', '-'], ['', ''], $request->cpf),
-                'rg'            => $request->rg,
-                'nome_pai'      => $request->nome_pai,
-                'nome_mae'      => $request->nome_mae,
-                'telefone'      => $request->telefone,
-                'nacionalidade' => $request->nacionalidade,
-                'naturalidade'      => $request->naturalidade,
-                'titulo_eleitor'    => $request->titulo_eleitor,
-                'reservista'        => $request->reservista,
-                'carteira_trabalho' => $request->carteira_trabalho,
-                'tipo_perfil_id'    => $request->tipo_perfil_id,
-                'user_id'           => $user->id,
-            ]);
+            $data['pessoa']['user_id'] = $user->id;
+            $data['pessoa']['cpf'] = str_replace(['.', '-'], ['', ''], $data['pessoa']['cpf']);
+            $pessoa = Pessoa::create($data['pessoa']);
             
-            $endereco = Endereco::create([
-                'rua'       => $request->rua,
-                'numero'    => $request->numero,
-                'bairro'    => $request->bairro,
-                'complemento'   => $request->complemento ?? 'none',
-                'cidade'        => $request->cidade,
-                'estado'        => $request->estado,
-                'pais'          => 'Brasil',
-                'cep'           => $request->cep,
-            ]);
+            $endereco = Endereco::create($data['endereco']);
     
-            $pessoa_endereco = PessoaEndereco::create([
+            PessoaEndereco::create([
                 'pessoa_id'     => $pessoa->id,
                 'endereco_id'   => $endereco->id,
             ]);
     
-            $funcionario = Funcionario::create([
+            Funcionario::create([
                 'pessoa_id' => $pessoa->id,
-                'matricula' => $request->matricula,
-                'cargo_id' => $request->cargo_id,
+                'matricula' => $data['funcionario']['matricula'],
+                'cargo_id' => $data['funcionario']['cargo_id'],
                 'is_status' => 0
             ]);
         });
         
         return redirect()->route('funcionario.index')->with('success', trans('validation.create-success'));
-
     }
 
     /*

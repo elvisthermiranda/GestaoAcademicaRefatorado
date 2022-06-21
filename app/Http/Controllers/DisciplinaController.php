@@ -2,29 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateDisciplinaRequest;
+use App\Models\Disciplina;
 use App\Services\DisciplinaService;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class DisciplinaController extends Controller
 {
-
-    /*
-    |---------------------------------------------------------------------------------------------
-    |   Dependência
-    |---------------------------------------------------------------------------------------------
-    */
-    private $disciplinaService;
-
-    /*
-    |---------------------------------------------------------------------------------------------
-    |   Construtor faz a injeção da dependência.
-    |---------------------------------------------------------------------------------------------
-    */
-    public function __construct(DisciplinaService $disciplinaService)
-    {
-        $this->disciplinaService = $disciplinaService;
-    }
+    public function __construct(
+        private DisciplinaService $disciplinaService,
+    ){}
 
     /*
     |---------------------------------------------------------------------------------------------
@@ -33,7 +19,9 @@ class DisciplinaController extends Controller
     */
     public function index()
     {
-        return $this->disciplinaService->consultar();
+        return view('secretaria.disciplina.index', [
+            'disciplinas' => $this->disciplinaService->consultar()
+        ]);
     }
 
     /*
@@ -51,20 +39,21 @@ class DisciplinaController extends Controller
     |   Insere um novo registro.
     |---------------------------------------------------------------------------------------------
     */
-    public function store(Request $request)
+    public function store(StoreUpdateDisciplinaRequest $request)
     {
-        return $this->disciplinaService->criar($request);
+        return $this->disciplinaService->criar($request->validated());
     }
 
-    
     /*
     |---------------------------------------------------------------------------------------------
     |   Exibe todos os registros.
     |---------------------------------------------------------------------------------------------
     */
-    public function show($id)
+    public function show(Disciplina $disciplina)
     {
-        return $this->disciplinaService->visualizar($id, 'secretaria.disciplina.visualizar');
+        return view('secretaria.disciplina.visualizar', [
+            'disciplina' => $disciplina
+        ]);
     }
 
     /*
@@ -72,9 +61,11 @@ class DisciplinaController extends Controller
     |   Edita um registro.
     |---------------------------------------------------------------------------------------------
     */
-    public function edit($id)
+    public function edit(Disciplina $disciplina)
     {
-        return $this->disciplinaService->visualizar($id, 'secretaria.disciplina.editar');
+        return view('secretaria.disciplina.editar', [
+            'disciplina' => $disciplina
+        ]);
     }
 
     /*
@@ -82,9 +73,9 @@ class DisciplinaController extends Controller
     |   Atualiza um registro.
     |---------------------------------------------------------------------------------------------
     */
-    public function update(Request $request, $id)
+    public function update(StoreUpdateDisciplinaRequest $request, Disciplina $disciplina)
     {
-        return $this->disciplinaService->editar($request, $id);
+        return $this->disciplinaService->editar($request->validated(), $disciplina);
     }
 
     /*
@@ -92,8 +83,8 @@ class DisciplinaController extends Controller
     |   Deleta um registro.
     |---------------------------------------------------------------------------------------------
     */
-    public function destroy($id)
+    public function destroy(Disciplina $disciplina)
     {
-        return $this->disciplinaService->excluir($id);
+        return $this->disciplinaService->excluir($disciplina);
     }
 }
